@@ -1,4 +1,5 @@
 let taskList = [];
+let badList = [];
 
 const handleOnSubmit = (e) => {
   const newForm = new FormData(e);
@@ -9,15 +10,20 @@ const handleOnSubmit = (e) => {
     task,
     hr,
     id: randomIdGenerator(),
+    type: "entry",
   };
   taskList.push(obj);
-  console.log(taskList);
   displayEntryList();
 };
 
 const displayEntryList = () => {
   let str = "";
-  const entryList = document.getElementById("entryList");
+  const entryElm = document.getElementById("entryList");
+
+  const entryList = taskList.filter((item) => {
+    item.type === "entry";
+  });
+
   taskList.map((item, index) => {
     str += `<tr class="md">
     <td>${index + 1}</td>
@@ -25,17 +31,62 @@ const displayEntryList = () => {
     <td>${item.hr}</td>
     <td class="text-end">
       <button class="rounded bg-danger btn">
-        <i class="fa-solid fa-trash"  onclick = handleOnDelete('${
+        <i class="fa-solid fa-trash"  onclick = "handleOnDelete('${
           item.id
-        }')></i>
+        }')"></i>
       </button>
-      <button class="btn bg-success">
+      <button class="btn bg-success" onclick = "switchTask('${
+        item.id
+      }','bad')"=>
         <i class="fa-solid fa-arrow-right"></i>
       </button>
     </td>
   </tr>`;
   });
-  entryList.innerHTML = str;
+  entryElm.innerHTML = str;
+};
+
+const displayBadList = () => {
+  let str = "";
+  const badElm = document.getElementById("badList");
+
+  const badList = taskList.filter((item) => {
+    item.type === "bad";
+  });
+
+  badList.map((item, index) => {
+    str += `<tr class="md">
+    <td>${index + 1}</td>
+    <td>${item.task}</td>
+    <td>${item.hr}</td>
+    <td class="text-end">
+      <button class="rounded bg-danger btn">
+        <i class="fa-solid fa-trash"  onclick = "handleOnDelete('${
+          item.id
+        }')"></i>
+      </button>
+      <button class="btn bg-success" onclick = "switchTask('${
+        item.id
+      }','bad')"=>
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+    </td>
+  </tr>`;
+  });
+  badElm.innerHTML = str;
+};
+
+const switchTask = (id, type) => {
+  taskList = taskList.map((item) => {
+    if (item.id === id) {
+      item.type = type;
+    }
+    console.log(item);
+    return item;
+  });
+
+  displayEntryList();
+  displayBadList();
 };
 
 const randomIdGenerator = () => {
@@ -55,5 +106,3 @@ const handleOnDelete = (id) => {
     displayEntryList();
   }
 };
-
-const switchTask = () => {};
