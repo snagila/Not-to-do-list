@@ -1,5 +1,4 @@
 let taskList = [];
-let badList = [];
 
 const handleOnSubmit = (e) => {
   const newForm = new FormData(e);
@@ -19,13 +18,10 @@ const handleOnSubmit = (e) => {
 const displayEntryList = () => {
   let str = "";
   const entryElm = document.getElementById("entryList");
-  console.log(taskList);
-  const entryList = taskList.filter((item) => {
-    item.type === "entry";
-  });
-  console.log(entryList);
 
-  taskList.map((item, index) => {
+  const entryList = taskList.filter((item) => item.type === "entry");
+
+  entryList.map((item, index) => {
     str += `<tr class="md">
     <td>${index + 1}</td>
     <td>${item.task}</td>
@@ -44,17 +40,16 @@ const displayEntryList = () => {
     </td>
   </tr>`;
   });
-  console.log(str);
+
   entryElm.innerHTML = str;
+  displayBadList();
 };
 
 const displayBadList = () => {
   let str = "";
   const badElm = document.getElementById("badList");
 
-  const badList = taskList.filter((item) => {
-    item.type === "bad";
-  });
+  const badList = taskList.filter((item) => item.type === "bad");
 
   badList.map((item, index) => {
     str += `<tr class="md">
@@ -62,14 +57,15 @@ const displayBadList = () => {
     <td>${item.task}</td>
     <td>${item.hr}</td>
     <td class="text-end">
+    <button onclick="switchTask('${item.id}','entry')" class="btn bg-warning" =>
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
       <button class="rounded bg-danger btn">
         <i class="fa-solid fa-trash"  onclick = "handleOnDelete('${
           item.id
         }')"></i>
       </button>
-      <button onclick=switchTask('${item.id}','bad') class="btn bg-success" =>
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      
     </td>
   </tr>`;
   });
@@ -77,10 +73,12 @@ const displayBadList = () => {
 };
 
 const switchTask = (id, type) => {
+  console.log(id, type);
   taskList = taskList.map((item) => {
     if (item.id === id) {
       item.type = type;
     }
+    console.log(item);
     return item;
   });
 
@@ -103,5 +101,6 @@ const handleOnDelete = (id) => {
     const filteredArray = taskList.filter((item) => item.id !== id);
     taskList = filteredArray;
     displayEntryList();
+    displayBadList();
   }
 };
