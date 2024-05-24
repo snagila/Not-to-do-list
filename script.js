@@ -19,10 +19,11 @@ const handleOnSubmit = (e) => {
 const displayEntryList = () => {
   let str = "";
   const entryElm = document.getElementById("entryList");
-
+  console.log(taskList);
   const entryList = taskList.filter((item) => {
     item.type === "entry";
   });
+  console.log(entryList);
 
   taskList.map((item, index) => {
     str += `<tr class="md">
@@ -43,6 +44,7 @@ const displayEntryList = () => {
     </td>
   </tr>`;
   });
+  console.log(str);
   entryElm.innerHTML = str;
 };
 
@@ -65,9 +67,7 @@ const displayBadList = () => {
           item.id
         }')"></i>
       </button>
-      <button class="btn bg-success" onclick = "switchTask('${
-        item.id
-      }','bad')"=>
+      <button onclick=switchTask('${item.id}','bad') class="btn bg-success" =>
         <i class="fa-solid fa-arrow-left"></i>
       </button>
     </td>
@@ -81,7 +81,6 @@ const switchTask = (id, type) => {
     if (item.id === id) {
       item.type = type;
     }
-    console.log(item);
     return item;
   });
 
