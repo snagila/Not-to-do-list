@@ -1,9 +1,11 @@
 let taskList = [];
 
+const hrsPerWeek = 24 * 7;
+
 const handleOnSubmit = (e) => {
   const newForm = new FormData(e);
   const task = newForm.get("task");
-  const hr = newForm.get("hr");
+  const hr = +newForm.get("hr");
 
   const obj = {
     task,
@@ -11,6 +13,11 @@ const handleOnSubmit = (e) => {
     id: randomIdGenerator(),
     type: "entry",
   };
+  // check total hrs in a week
+  const existingTtl = taskTotal();
+  if (existingTtl + hr > hrsPerWeek) {
+    return alert("Sorry! Maximun hours per week has been spended");
+  }
   taskList.push(obj);
   displayEntryList();
 };
@@ -43,6 +50,7 @@ const displayEntryList = () => {
 
   entryElm.innerHTML = str;
   displayBadList();
+  taskTotal();
 };
 
 const displayBadList = () => {
@@ -60,16 +68,21 @@ const displayBadList = () => {
     <button onclick="switchTask('${item.id}','entry')" class="btn bg-warning" =>
       <i class="fa-solid fa-arrow-left"></i>
     </button>
-      <button class="rounded bg-danger btn">
-        <i class="fa-solid fa-trash"  onclick = "handleOnDelete('${
-          item.id
-        }')"></i>
-      </button>
+    <button class="rounded bg-danger btn">
+      <i class="fa-solid fa-trash"  onclick = "handleOnDelete('${
+        item.id
+      }')"></i>
+    </button>
       
     </td>
   </tr>`;
   });
   badElm.innerHTML = str;
+
+  document.getElementById("savedHrs").innerText = badList.reduce(
+    (acc, item) => acc + item.hr,
+    0
+  );
 };
 
 const switchTask = (id, type) => {
@@ -103,4 +116,13 @@ const handleOnDelete = (id) => {
     displayEntryList();
     displayBadList();
   }
+};
+
+const taskTotal = () => {
+  const ttlhrsElm = document.getElementById("ttlHrs");
+  const ttlHr = taskList.reduce((acc, item) => {
+    return acc + item.hr;
+  }, 0);
+  ttlhrsElm.innerText = ttlHr;
+  return ttlHr;
 };
